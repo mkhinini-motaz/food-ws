@@ -2,7 +2,7 @@ const { createAdapter } = require("@socket.io/redis-adapter");
 const { createClient } = require("redis");
 const { Server } = require("socket.io");
 
-import { registerShopEvents } from "./src/events";
+const { registerShopEvents } = require("./src/events/shop");
 
 const io = new Server({ /* options */ });
 

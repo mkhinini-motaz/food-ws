@@ -1,7 +1,7 @@
 const redis = require('redis');
 const redisPrefix = 'ghost_';
 
-export const registerShopEvents = (socket) => {
+const registerShopEvents = (socket) => {
     const redisClient = redis.createClient();
 
     redisClient.subscribe('message');
@@ -14,4 +14,8 @@ export const registerShopEvents = (socket) => {
         redisClient.quit();
         console.log('Got disconnect ! : ');
     });
+};
+
+module.exports = {
+    registerShopEvents
 };
