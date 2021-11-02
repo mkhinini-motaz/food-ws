@@ -8,7 +8,7 @@ const registerShopEvents = (socket) => {
     const redisClient = redis.createClient();
 
     socket.on('login', ({ authToken }) => {
-        axios.get(BASE_SHOP_API_URL + '/profile', { headers: { Authorization: 'Bearer ' + authToken } })
+        axios.get('https://api.ghostchef.shop/api/shop' + '/profile', { headers: { Authorization: 'Bearer ' + authToken } })
             .then(response => {
                 const authShopUser = response.data.data;
                 socket.data.authShopUser = authShopUser;
@@ -18,10 +18,13 @@ const registerShopEvents = (socket) => {
                 socket.join(orderUpdateUserEvent);
 
                 redisClient.subscribe(orderUpdateServerEvent);
-                redisClient.on(orderUpdateServerEvent, (channel, payload) => {
-                    if (payload.shopUserId === authShopUser.id) {
-                        socket.to(orderUpdateUserEvent).emit('order_update', message);
+                redisClient.on('message', (channel, payload) => {
+                    console.log('on message  :  ', orderUpdateServerEvent + '   :   ', {channel, payload, condition: payload.shopTransporterId === authShopUser.id})
+                    socket.emit('order_update', payload);
+                    /*
+                    if (payload.shopTransporterId === authShopUser.id) {
                     }
+                     */
                 });
 
             });
