@@ -3,6 +3,7 @@ const { createClient } = require("redis");
 const { Server } = require("socket.io");
 
 const { registerShopEvents } = require("./src/events/shop");
+const { registerMenuEvents } = require("./src/events/menu");
 
 const io = new Server({ /* options */ });
 
@@ -12,6 +13,7 @@ io.adapter(createAdapter(pubClient, subClient));
 
 io.on("connection", (socket) => {
     registerShopEvents(socket);
+    registerMenuEvents(socket);
     console.log('new client ', socket.id);
 });
 

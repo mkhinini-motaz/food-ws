@@ -36,6 +36,4 @@ const registerShopEvents = (socket) => {
     });
 };
 
-module.exports = {
-    registerShopEvents
-};
+module.exports = { registerShopEvents, };
