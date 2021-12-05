@@ -11,6 +11,7 @@ console.log('menu-connect : shopId : ', shopId)
         const menuLangUpdateEvent = redisPrefix + 'shop_' + shopId + '.menu_lang_update';
         socket.join(menuUpdateEvent);
         redisClient.subscribe(menuUpdateEvent);
+        redisClient.subscribe(menuLangUpdateEvent);
         redisClient.on('message', (channel, payload) => {
 console.log('menu update on msg', {menuUpdateEvent, channel, payload})
             if (channel === menuUpdateEvent) {
