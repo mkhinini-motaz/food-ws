@@ -8,12 +8,16 @@ const registerMenuEvents = (socket) => {
     socket.on('menu-connect', ({ shopId }) => {
 console.log('menu-connect : shopId : ', shopId)
         const menuUpdateEvent = redisPrefix + 'shop_' + shopId + '.menu_update';
+        const menuLangUpdateEvent = redisPrefix + 'shop_' + shopId + '.menu_lang_update';
         socket.join(menuUpdateEvent);
         redisClient.subscribe(menuUpdateEvent);
         redisClient.on('message', (channel, payload) => {
 console.log('menu update on msg', {menuUpdateEvent, channel, payload})
             if (channel === menuUpdateEvent) {
                 socket.emit('menu_update', payload);
+            }
+            if (channel === menuLangUpdateEvent) {
+                socket.emit('menu_lang_update', payload);
             }
         });
     });
