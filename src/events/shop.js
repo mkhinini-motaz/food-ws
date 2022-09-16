@@ -3,25 +3,22 @@ const { BASE_SHOP_API_URL } = require('../constants/index');
 const redisPrefix = 'ghost_';
 
 const registerShopEvents = (socket, redisClient) => {
-    socket.on('login', async ({ authToken }) => {
+    socket.on('shop-user-login', async ({ authToken }) => {
         const response = await axios.get(BASE_SHOP_API_URL + '/profile', { headers: { Authorization: 'Bearer ' + authToken } });
+
         const authShopUser = response.data.data;
         socket.data.authShopUser = authShopUser;
 
-        const orderUpdateServerEvent = redisPrefix + 'shop_' + authShopUser.shop_id + '.order_update';
-        const orderUpdateUserEvent = orderUpdateServerEvent + '.shopUser_' + authShopUser.id;
-        // TODO: some shopUser roles must listen to all shop events
-        socket.join(orderUpdateUserEvent);
-
-        redisClient.subscribe(orderUpdateServerEvent);
+console.log('shop-user-connect : auth user : ', authShopUser)
+        const orderUpdateEvent = redisPrefix + 'shop_' + authShopUser.shop_id + '.order_update';
+        redisClient.subscribe(orderUpdateEvent);
         redisClient.on('message', (channel, payload) => {
-            console.log('on message  :  ', orderUpdateServerEvent + '   :   ', {channel, payload, condition: payload.shopTransporterId === authShopUser.id})
-            socket.emit('order_update', payload);
-            /*
-            if (payload.shopTransporterId === authShopUser.id) {
+            if (channel === orderUpdateEvent) {
+                socket.emit('order_update', payload);
             }
-             */
+console.log('order update on msg', {orderUpdateEvent, channel, payload})
         });
+
     });
 };
 
